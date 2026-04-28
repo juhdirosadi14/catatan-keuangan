@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Keuangan Mandiri - Juhdi & Purnamasari</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-green: #064e3b; 
+            --accent-gold: #fbbf24;   
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--light-bg);
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background-color: var(--primary-green);
+            min-height: 100vh;
+            color: white;
+            padding: 2rem 1rem;
+            position: fixed;
+            width: 240px;
+            z-index: 100;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link i { font-size: 1.2rem; margin-right: 12px; }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 4px 0 0 var(--accent-gold);
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 240px;
+            padding: 3rem;
+            min-height: 100vh;
+        }
+
+        .card-rekap {
+            border: none;
+            border-radius: 20px;
+            padding: 1.5rem;
+            background: var(--white);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+
+        .btn-gold {
+            background-color: var(--accent-gold);
+            color: var(--primary-green);
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-gold:hover {
+            background-color: #f59e0b;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #64748b;
+            border: none;
+        }
+
+        .page-section { display: none; animation: fadeIn 0.5s ease; }
+        .page-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; min-height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="mb-5 px-3">
+        <h4 class="fw-bold m-0 text-white">Finance<span style="color: var(--accent-gold);">Ku</span></h4>
+        <small class="opacity-50">v1.0 Personal Dashboard</small>
+    </div>
+    <div class="nav flex-column">
+        <div class="nav-link active" onclick="switchPage('dashboard', this)">
+            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+        </div>
+        <div class="nav-link" onclick="switchPage('pemasukan', this)">
+            <i class="bi bi-arrow-down-left-square-fill"></i> Pemasukan
+        </div>
+        <div class="nav-link" onclick="switchPage('pengeluaran', this)">
+            <i class="bi bi-arrow-up-right-square-fill"></i> Pengeluaran
+        </div>
+    </div>
+</div>
+
+<main class="main-content">
+    <section id="dashboard" class="page-section active">
+        <div class="mb-4">
+            <h2 class="fw-bold">Ringkasan Keuangan</h2>
+            <p class="text-muted">Data otomatis dari Google Spreadsheet</p>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card-rekap border-start border-success border-5">
+                    <span class="text-muted small fw-bold">TOTAL PEMASUKAN</span>
+                    <h2 class="fw-bold text-success mt-2" id="sum-masuk">Rp 0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-rekap border-start border-danger border-5">
+                    <span class="text-muted small fw-bold">TOTAL PENGELUARAN</span>
+                    <h2 class="fw-bold text-danger mt-2" id="sum-keluar">Rp 0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-rekap text-white" style="background: var(--primary-green)">
+                    <span class="opacity-75 small fw-bold">SALDO SAAT INI</span>
+                    <h2 class="fw-bold mt-2" id="sum-saldo" style="color: var(--accent-gold)">Rp 0</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pemasukan" class="page-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Data Pemasukan</h2>
+            <button class="btn btn-gold" onclick="window.open('https://docs.google.com/spreadsheets/d/1RaH0ZVzcFMzTJoNd9RvYxLsiw10XE4yYXKSRSDIp7a1d5Z8nr1Vmv9zhzos9Z7rm1rFextr6xZs60o/edit', '_blank')">
+                <i class="bi bi-plus-lg me-2"></i>Tambah Data
+            </button>
+        </div>
+        <div class="table-container">
+            <table class="table align-middle">
+                <thead>
+                    <tr><th>Keterangan</th><th>Tanggal</th><th>Sumber</th><th class="text-end">Nominal</th></tr>
+                </thead>
+                <tbody id="table-pemasukan-body"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="pengeluaran" class="page-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Data Pengeluaran</h2>
+            <button class="btn btn-gold" onclick="window.open('https://docs.google.com/spreadsheets/d/1RaH0ZVzcFMzTJoNd9RvYxLsiw10XE4yYXKSRSDIp7a1d5Z8nr1Vmv9zhzos9Z7rm1rFextr6xZs60o/edit', '_blank')">
+                <i class="bi bi-plus-lg me-2"></i>Tambah Data
+            </button>
+        </div>
+        <div class="table-container">
+            <table class="table align-middle">
+                <thead>
+                    <tr><th>Keterangan</th><th>Tanggal</th><th>Kategori</th><th class="text-end">Nominal</th></tr>
+                </thead>
+                <tbody id="table-pengeluaran-body"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script>
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaH0ZVzcFMzTJoNd9RvYxLsiw10XE4yYXKSRSDIp7a1d5Z8nr1Vmv9zhzos9Z7rm1rFextr6xZs60o/pub?output=csv';
+
+    function switchPage(id, el) {
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    }
+
+    function formatIDR(val) {
+        return "Rp " + Number(val).toLocaleString('id-ID');
+    }
+
+    function init() {
+        Papa.parse(url, {
+            download: true,
+            header: true,
+            complete: (res) => {
+                let tM = 0, tK = 0;
+                const bM = document.getElementById('table-pemasukan-body');
+                const bK = document.getElementById('table-pengeluaran-body');
+                
+                bM.innerHTML = ''; bK.innerHTML = '';
+
+                res.data.forEach(row => {
+                    // Membersihkan karakter non-angka (seperti titik ribuan dari spreadsheet)
+                    let cleanNominal = String(row['Nominal'] || '0').replace(/[^0-9]/g, '');
+                    let val = parseInt(cleanNominal) || 0;
+
+                    if (row['Sumber']) {
+                        tM += val;
+                        bM.innerHTML += `<tr><td class="fw-bold">${row['Keterangan']}</td><td>${row['Tanggal']}</td><td><span class="badge bg-success-subtle text-success">${row['Sumber']}</span></td><td class="text-end fw-bold text-success">${formatIDR(val)}</td></tr>`;
+                    } else if (row['Kategori']) {
+                        tK += val;
+                        bK.innerHTML += `<tr><td class="fw-bold">${row['Keterangan']}</td><td>${row['Tanggal']}</td><td><span class="badge bg-warning-subtle text-warning">${row['Kategori']}</span></td><td class="text-end fw-bold text-danger">${formatIDR(val)}</td></tr>`;
+                    }
+                });
+
+                document.getElementById('sum-masuk').innerText = formatIDR(tM);
+                document.getElementById('sum-keluar').innerText = formatIDR(tK);
+                document.getElementById('sum-saldo').innerText = formatIDR(tM - tK);
+            }
+        });
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
