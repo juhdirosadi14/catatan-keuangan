@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keluarga. - Dashboard Keuangan</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Custom Color Palette (Emerald & Amber) */
+            --emerald-50: #ecfdf5;
+            --emerald-100: #d1fae5;
+            --emerald-500: #10b981;
+            --emerald-600: #059669;
+            --emerald-700: #047857;
+            --amber-50: #fffbeb;
+            --amber-100: #fef3c7;
+            --amber-400: #fbbf24;
+            --amber-500: #f59e0b;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+
+        body {
+            background-color: var(--slate-50);
+            font-family: 'Inter', sans-serif;
+            color: var(--slate-800);
+            overflow-x: hidden;
+        }
+
+        /* Utilities */
+        .rounded-2xl { border-radius: 1rem !important; }
+        .rounded-xl { border-radius: 0.75rem !important; }
+        .text-emerald { color: var(--emerald-600) !important; }
+        .text-amber { color: var(--amber-500) !important; }
+        .text-slate { color: var(--slate-500) !important; }
+        .bg-emerald-soft { background-color: var(--emerald-50) !important; }
+        .bg-amber-soft { background-color: var(--amber-50) !important; }
+        .bg-slate-soft { background-color: var(--slate-50) !important; }
+        
+        .shadow-soft {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Layout */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #fff;
+            border-right: 1px solid var(--slate-100);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Sidebar Nav */
+        .nav-sidebar .nav-link {
+            color: var(--slate-500);
+            font-weight: 500;
+            padding: 0.85rem 1.25rem;
+            border-radius: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-sidebar .nav-link i {
+            font-size: 1.2rem;
+            color: var(--slate-400);
+        }
+
+        .nav-sidebar .nav-link:hover {
+            background-color: var(--slate-50);
+            color: var(--emerald-600);
+        }
+
+        .nav-sidebar .nav-link.active {
+            background-color: var(--emerald-50);
+            color: var(--emerald-700);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-sidebar .nav-link.active i {
+            color: var(--emerald-600);
+        }
+
+        .nav-sidebar .nav-link.active::after {
+            content: '';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 24px;
+            background-color: var(--amber-400);
+            border-radius: 999px;
+        }
+
+        /* Sidebar Promo Box */
+        .promo-box {
+            background: linear-gradient(135deg, var(--emerald-600) 0%, var(--emerald-700) 100%);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+        .promo-box::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 80px; height: 80px;
+            background: white;
+            opacity: 0.1;
+            border-bottom-left-radius: 100%;
+        }
+
+        /* Topbar Search */
+        .search-wrapper {
+            position: relative;
+            width: 350px;
+        }
+        .search-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--slate-400);
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            background-color: var(--slate-50);
+            border: 1px solid transparent;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--emerald-500);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Cards */
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--slate-50);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            font-size: 1.5rem;
+        }
+        
+        .stat-card.gold-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, transparent 100%);
+            border-bottom-left-radius: 100%;
+            z-index: 0;
+        }
+        .stat-card.emerald-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, transparent 100%);
+            border-bottom-left-radius: 100%;
+            z-index: 0;
+        }
+
+        /* Table Customization */
+        .table-custom th {
+            color: var(--slate-400);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            border-bottom: 2px solid var(--slate-50);
+            padding-bottom: 1rem;
+        }
+        .table-custom td {
+            padding: 1rem 0;
+            vertical-align: middle;
+            color: var(--slate-700);
+            font-weight: 500;
+            border-bottom: 1px solid var(--slate-50);
+        }
+
+        /* Custom Buttons */
+        .btn-emerald {
+            background-color: var(--emerald-600);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.6rem 1.25rem;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-emerald:hover {
+            background-color: var(--emerald-700);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-dashed {
+            border: 2px dashed var(--emerald-100);
+            color: var(--emerald-600);
+            background: transparent;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .btn-outline-dashed:hover {
+            background: var(--emerald-50);
+            border-color: var(--emerald-200);
+        }
+
+        /* Progress Bar */
+        .progress-custom {
+            height: 10px;
+            border-radius: 999px;
+            background-color: var(--slate-100);
+        }
+        .progress-custom .progress-bar {
+            background-color: var(--amber-400);
+            border-radius: 999px;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar pb-3">
+        <div class="p-4 pt-5 mb-3">
+            <div class="d-flex align-items-center gap-3 mb-4 text-emerald">
+                <div class="icon-box bg-emerald-600 text-white shadow-soft" style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--emerald-500), var(--emerald-600));">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <h3 class="m-0 fw-bold" style="letter-spacing: -0.5px;">Keluarga<span class="text-amber">.</span></h3>
+            </div>
+            <p class="text-uppercase fw-bold text-slate mb-2 ms-2" style="font-size: 0.7rem; letter-spacing: 1px;">Menu Utama</p>
+        </div>
+
+        <div class="flex-grow-1 px-3 overflow-auto">
+            <!-- Tabs Nav for Laravel -->
+            <ul class="nav nav-sidebar flex-column" id="menuTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
+                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start" id="pemasukan-tab" data-bs-toggle="tab" data-bs-target="#pemasukan" type="button" role="tab">
+                        <i class="bi bi-arrow-down-circle"></i> Data Pemasukan
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start" id="pengeluaran-tab" data-bs-toggle="tab" data-bs-target="#pengeluaran" type="button" role="tab">
+                        <i class="bi bi-arrow-up-circle"></i> Data Pengeluaran
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start" id="wishlist-tab" data-bs-toggle="tab" data-bs-target="#wishlist" type="button" role="tab">
+                        <i class="bi bi-star-fill"></i> Wishlist Impian
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start" id="tabungan-tab" data-bs-toggle="tab" data-bs-target="#tabungan" type="button" role="tab">
+                        <i class="bi bi-balloon-heart"></i> Tabungan Ortu
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start" id="hutang-tab" data-bs-toggle="tab" data-bs-target="#hutang" type="button" role="tab">
+                        <i class="bi bi-credit-card"></i> Data Hutang
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 text-start" id="piutang-tab" data-bs-toggle="tab" data-bs-target="#piutang" type="button" role="tab">
+                        <i class="bi bi-cash-stack"></i> Data Piutang
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="px-4 mt-auto">
+            <div class="promo-box">
+                <i class="bi bi-star-fill text-warning fs-5 mb-2 d-block"></i>
+                <h6 class="fw-bold mb-1 fs-6 text-white">Cek Laporan Bulanan</h6>
+                <p class="text-white-50 mb-3" style="font-size: 0.75rem;">Lihat ringkasan lengkap bulan April 2026.</p>
+                <button class="btn btn-light w-100 btn-sm rounded-3 fw-bold text-emerald">Lihat Laporan</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="bg-white rounded-2xl shadow-soft p-4 d-flex justify-content-between align-items-center mb-4">
+            <div class="search-wrapper d-none d-md-block">
+                <i class="bi bi-search"></i>
+                <input type="text" class="search-input" placeholder="Cari transaksi...">
+            </div>
+            
+            <div class="d-flex align-items-center gap-4">
+                <button class="btn btn-link p-0 text-slate position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-amber-soft border border-light rounded-circle" style="background-color: var(--amber-500)!important;"></span>
+                </button>
+                
+                <div class="d-flex align-items-center gap-3 ps-4 border-start">
+                    <div class="text-end d-none d-md-block">
+                        <p class="mb-0 fw-semibold fs-6 text-dark">Keluarga Bahagia</p>
+                        <p class="mb-0 text-slate" style="font-size: 0.75rem;">Premium Plan</p>
+                    </div>
+                    <div class="rounded-circle bg-emerald-soft text-emerald d-flex align-items-center justify-content-center fw-bold border border-2" style="width: 40px; height: 40px; border-color: var(--emerald-500)!important;">
+                        KB
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT AREA -->
+        <div class="tab-content" id="myTabContent">
+            
+            <!-- DASHBOARD VIEW -->
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                
+                <!-- 4 Stat Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="stat-card shadow-soft emerald-bg">
+                            <div class="d-flex justify-content-between align-items-start position-relative" style="z-index: 1;">
+                                <div>
+                                    <p class="text-slate mb-1 fw-medium" style="font-size: 0.85rem;">Total Saldo Saat Ini</p>
+                                    <h4 class="fw-bold mb-0 text-dark">Rp 15.450.000</h4>
+                                </div>
+                                <div class="icon-box bg-emerald-soft text-emerald">
+                                    <i class="bi bi-wallet2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="stat-card shadow-soft">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-slate mb-1 fw-medium" style="font-size: 0.85rem;">Pemasukan Bulan Ini</p>
+                                    <h4 class="fw-bold mb-0 text-dark">Rp 20.000.000</h4>
+                                </div>
+                                <div class="icon-box text-primary" style="background-color: #dbeafe;">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="stat-card shadow-soft">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-slate mb-1 fw-medium" style="font-size: 0.85rem;">Pengeluaran Bulan Ini</p>
+                                    <h4 class="fw-bold mb-0 text-dark">Rp 4.550.000</h4>
+                                </div>
+                                <div class="icon-box text-danger" style="background-color: #ffe4e6;">
+                                    <i class="bi bi-arrow-up-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="stat-card shadow-soft gold-bg">
+                            <div class="d-flex justify-content-between align-items-start position-relative" style="z-index: 1;">
+                                <div>
+                                    <p class="text-slate mb-1 fw-medium" style="font-size: 0.85rem;">Tabungan Orang Tua</p>
+                                    <h4 class="fw-bold mb-0 text-dark">Rp 2.000.000</h4>
+                                </div>
+                                <div class="icon-box bg-amber-soft text-amber">
+                                    <i class="bi bi-balloon-heart"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Split Content -->
+                <div class="row g-4">
+                    <!-- Recent Transactions -->
+                    <div class="col-12 col-lg-8">
+                        <div class="bg-white rounded-2xl shadow-soft p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold text-dark m-0">Transaksi Terakhir</h5>
+                                <a href="#" class="text-decoration-none fw-semibold text-emerald" style="font-size: 0.85rem;">Lihat Semua</a>
+                            </div>
+
+                            <!-- List -->
+                            <div class="d-flex flex-column gap-3">
+                                <!-- Item Out -->
+                                <div class="d-flex justify-content-between align-items-center p-3 rounded-xl border border-transparent custom-hover-bg">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-box bg-danger bg-opacity-10 text-danger rounded-3" style="width: 40px; height: 40px;">
+                                            <i class="bi bi-arrow-up-circle"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="m-0 fw-semibold">Belanja Bulanan</h6>
+                                            <small class="text-slate">27 Apr 2026 • Kebutuhan</small>
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold text-dark">
+                                        -Rp 1.200.000
+                                    </div>
+                                </div>
+
+                                <!-- Item In -->
+                                <div class="d-flex justify-content-between align-items-center p-3 rounded-xl border border-transparent custom-hover-bg">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-box bg-emerald-soft text-emerald rounded-3" style="width: 40px; height: 40px;">
+                                            <i class="bi bi-arrow-down-circle"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="m-0 fw-semibold">Gaji Suami</h6>
+                                            <small class="text-slate">25 Apr 2026 • Gaji</small>
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold text-emerald">
+                                        +Rp 12.000.000
+                                    </div>
+                                </div>
+
+                                 <!-- Item In -->
+                                 <div class="d-flex justify-content-between align-items-center p-3 rounded-xl border border-transparent custom-hover-bg">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-box bg-emerald-soft text-emerald rounded-3" style="width: 40px; height: 40px;">
+                                            <i class="bi bi-arrow-down-circle"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="m-0 fw-semibold">Gaji Istri</h6>
+                                            <small class="text-slate">25 Apr 2026 • Gaji</small>
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold text-emerald">
+                                        +Rp 8.000.000
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wishlist Mini -->
+                    <div class="col-12 col-lg-4">
+                        <div class="bg-white rounded-2xl shadow-soft p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold text-dark m-0">Wishlist Impian</h5>
+                                <div class="icon-box bg-amber-soft text-amber rounded-circle" style="width: 32px; height: 32px; font-size: 1rem;">
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column gap-4">
+                                <!-- Wishlist Item 1 -->
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="fw-semibold text-dark fs-6">Kulkas 2 Pintu</span>
+                                        <span class="text-emerald fw-bold">70%</span>
+                                    </div>
+                                    <div class="progress progress-custom mb-2">
+                                        <div class="progress-bar" role="progressbar" style="width: 70%;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-slate" style="font-size: 0.75rem;">
+                                        <span>Terkumpul: Rp 3.500.000</span>
+                                        <span>Target: Des 2026</span>
+                                    </div>
+                                </div>
+
+                                <!-- Wishlist Item 2 -->
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="fw-semibold text-dark fs-6">Liburan Bali</span>
+                                        <span class="text-emerald fw-bold">20%</span>
+                                    </div>
+                                    <div class="progress progress-custom mb-2">
+                                        <div class="progress-bar" role="progressbar" style="width: 20%;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-slate" style="font-size: 0.75rem;">
+                                        <span>Terkumpul: Rp 2.000.000</span>
+                                        <span>Target: Jun 2027</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn-outline-dashed mt-4">
+                                <i class="bi bi-plus-lg me-1"></i> Tambah Impian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATA PEMASUKAN VIEW (GENERIC TABLE) -->
+            <div class="tab-pane fade" id="pemasukan" role="tabpanel">
+                <div class="bg-white rounded-2xl shadow-soft p-4 p-md-5">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+                        <div class="mb-3 mb-md-0">
+                            <h3 class="fw-bold text-dark">Data Pemasukan</h3>
+                            <p class="text-slate m-0">Catatan semua aliran dana masuk ke kas keluarga.</p>
+                        </div>
+                        <button class="btn btn-emerald">
+                            <i class="bi bi-plus-lg me-2"></i> Tambah Data
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Kategori</th>
+                                    <th>Jumlah</th>
+                                    <th class="text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>25 Apr 2026</td>
+                                    <td>Gaji Suami</td>
+                                    <td>Gaji</td>
+                                    <td class="fw-bold text-emerald">Rp 12.000.000</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-link text-slate p-0"><i class="bi bi-three-dots-vertical"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>25 Apr 2026</td>
+                                    <td>Gaji Istri</td>
+                                    <td>Gaji</td>
+                                    <td class="fw-bold text-emerald">Rp 8.000.000</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-link text-slate p-0"><i class="bi bi-three-dots-vertical"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DATA PENGELUARAN VIEW -->
+            <div class="tab-pane fade" id="pengeluaran" role="tabpanel">
+                <div class="bg-white rounded-2xl shadow-soft p-4 p-md-5">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+                        <div class="mb-3 mb-md-0">
+                            <h3 class="fw-bold text-dark">Data Pengeluaran</h3>
+                            <p class="text-slate m-0">Pantau pengeluaran agar tetap sesuai budget.</p>
+                        </div>
+                        <button class="btn btn-emerald">
+                            <i class="bi bi-plus-lg me-2"></i> Tambah Data
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Kategori</th>
+                                    <th>Jumlah</th>
+                                    <th class="text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27 Apr 2026</td>
+                                    <td>Belanja Sayur & Daging</td>
+                                    <td>Kebutuhan Pokok</td>
+                                    <td class="fw-bold text-dark">Rp 1.200.000</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-link text-slate p-0"><i class="bi bi-three-dots-vertical"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>22 Apr 2026</td>
+                                    <td>Listrik & Air (Token)</td>
+                                    <td>Tagihan</td>
+                                    <td class="fw-bold text-dark">Rp 850.000</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-link text-slate p-0"><i class="bi bi-three-dots-vertical"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTHER TABS (Placeholder for Laravel logic) -->
+            <div class="tab-pane fade" id="wishlist" role="tabpanel">
+                <div class="alert alert-success bg-emerald-soft text-emerald border-0 rounded-xl" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> Tampilan Halaman Wishlist (Gunakan format tabel yang sama). Di Laravel, Anda bisa menggunakan `@include('komponen.tabel')`.
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="tabungan" role="tabpanel">
+                <div class="alert alert-success bg-emerald-soft text-emerald border-0 rounded-xl" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> Tampilan Tabungan Orang Tua.
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="hutang" role="tabpanel">
+                <div class="alert alert-warning bg-amber-soft text-amber border-0 rounded-xl" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> Tampilan Data Hutang.
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="piutang" role="tabpanel">
+                <div class="alert alert-warning bg-amber-soft text-amber border-0 rounded-xl" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> Tampilan Data Piutang.
+                </div>
+            </div>
+
+        </div> <!-- End Tab Content -->
+    </main>
+
+    <!-- Bootstrap JS Bundle (Includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+        /* Extra hover style injected by JS or standard CSS */
+        .custom-hover-bg:hover {
+            background-color: var(--slate-50);
+            border-color: var(--slate-100) !important;
+        }
+    </style>
+</body>
+</html>
